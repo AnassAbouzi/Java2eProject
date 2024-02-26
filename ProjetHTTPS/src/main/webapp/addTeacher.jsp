@@ -1,0 +1,51 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.Mcsi.*" %>
+<%
+	UserBean user = (UserBean)session.getAttribute("user");
+	try {
+		if (user == null) {
+			request.getRequestDispatcher("login.jsp").forward(request, response);
+			return;
+		}
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+%>
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Insert title here</title>
+		<link rel="stylesheet" href="css/addStudent.css">
+	</head>
+	<body>
+		<div align="right">
+	    Welcome, <%= user.getUsername() %>
+	    <br>
+	    <br>
+	    <button class="logout" onclick="location.href='Logout'">Logout</button>
+		</div> 
+
+		<h1>Add New Student</h1>
+		
+		<form action="AddStudentServlet" method="POST">
+		    <label for="studentName">Student User Name:</label>
+		    <input type="text" id="userName" name="userName" required>
+		    <br>
+		    
+		    <label for="password">Password:</label>
+		    <input type="text" id="password" name="password" required>
+		    <br>
+		    
+		    <label for="points">Points:</label>
+		    <input type="number" id="points" name="points" required>
+		    <br>
+		    
+		    <button type="reset" class="reset">Reset</button>
+		    <button class="reset" onclick="location.href='adminPanel.jsp'" type="button">Annuler</button>
+		    <button type="submit">Confirmer</button>
+		</form>
+	
+	</body>
+</html>
