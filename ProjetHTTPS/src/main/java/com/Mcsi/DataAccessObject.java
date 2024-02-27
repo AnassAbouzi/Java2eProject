@@ -172,4 +172,43 @@ public class DataAccessObject {
 		}
 	}
 	
+	public static int verify(String username) {
+		//methode pour verifier l'existence d'un utilisateur dans la base de donnees.
+		//initialisation de la variable a retourner indiquant l'existance d'un utilisateur avec le nom d'utilisateur username
+		int status = 0;
+		try {
+			//creation de la connection avec la base de donnees
+			Connection con = DataAccessObject.getConnection();
+			//creation et initialisation de la requete sql
+			Statement st = con.createStatement();
+			String sql = "SELECT * FROM users WHERE username = '" + username + "';";
+			ResultSet rs = st.executeQuery(sql);
+			//s'il existe un utilisateur avec le meme nom d'utilisateur on retourne 1
+			if (rs.next()) {
+				status = 1;
+			}
+			rs.close();
+			st.close();
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return status;
+	}
+	
+	public static void createUser(String username, String password) {
+		//methode pour la creation d'un nouveau utilisateur
+		try {
+			//creation de la connection avec la base de donnees
+			Connection con = DataAccessObject.getConnection();
+			//creation et initialisation de la requete sql
+			Statement st = con.createStatement();
+			String sql = "INSERT INTO users (username, password, role, points) VALUES ('" + username + "', '" + password + "', 'student', 0);";
+			st.executeUpdate(sql);
+			st.close();
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
