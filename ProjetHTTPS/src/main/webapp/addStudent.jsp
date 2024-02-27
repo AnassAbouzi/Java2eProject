@@ -30,7 +30,7 @@
 		<h1>Add New Student</h1>
 		
 		<form action="AddStudentServlet" method="POST">
-		    <label for="studentName">Student User Name:</label>
+		    <label for="userName">Student User Name:</label>
 		    <input type="text" id="userName" name="userName" required>
 		    <br>
 		    

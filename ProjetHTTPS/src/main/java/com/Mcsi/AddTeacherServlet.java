@@ -8,17 +8,17 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-public class AddStudentServlet extends HttpServlet {
+public class AddTeacherServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    public AddStudentServlet() {
+    
+    public AddTeacherServlet() {
         super();
     }
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
 		if (session != null) {
-			DataAccessObject.addUser((String)request.getParameter("userName"), (String)request.getParameter("password"), "student", null, Integer.parseInt(request.getParameter("points")));
+			DataAccessObject.addUser((String)request.getParameter("userName"), (String)request.getParameter("password"), "teacher", (String)request.getParameter("unit_name"), 0);
 			response.sendRedirect("adminPanel.jsp");
 		} else {
 			response.sendRedirect("login.jsp");

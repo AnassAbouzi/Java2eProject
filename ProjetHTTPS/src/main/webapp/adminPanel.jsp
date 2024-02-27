@@ -49,8 +49,8 @@
 		        </thead>
 	        	<tbody>
 		        <%
-		        	List<UserBean> students = DataAccessObject.getUsers("student");
-		        	for (UserBean student : students) {
+		        	List<Student> students = DataAccessObject.getStudents();
+		        	for (Student student : students) {
 		        %>
 		        	<tr>
 		        		<td><%= student.getId() %></td>
@@ -75,18 +75,20 @@
 		                <th>ID</th>
 		                <th>USER NAME</th>
 		                <th>PASSWORD</th>
+		                <th>UNIT NAME</th>
 		                <th>ACTION</th>
 		            </tr>
 		        </thead>
 	        	<tbody>
 		        <%
-		        	List<UserBean> teachers = DataAccessObject.getUsers("teacher");
-		        	for (UserBean teacher : teachers) {
+		        	List<Teacher> teachers = DataAccessObject.getTeachers();
+		        	for (Teacher teacher : teachers) {
 		        %>
 		        	<tr>
 		        		<td><%= teacher.getId() %></td>
 		        		<td><%= teacher.getUsername() %></td>
 		        		<td><%= teacher.getPassword() %></td>
+		        		<td><%= teacher.getUnit_name() %></td>
 		        		<td>
 		        			<button class="modify" onclick="location.href='Delete?id=<%= teacher.getId() %>'">modifier</button>
 		        			<button class="delete" onclick="location.href='Delete?id=<%= teacher.getId() %>'">Supprimer</button>

@@ -59,4 +59,14 @@
     <servlet-name>AddStudentServlet</servlet-name>
     <url-pattern>/AddStudentServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AddTeacherServlet</display-name>
+    <servlet-name>AddTeacherServlet</servlet-name>
+    <servlet-class>com.Mcsi.AddTeacherServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddTeacherServlet</servlet-name>
+    <url-pattern>/AddTeacherServlet</url-pattern>
+  </servlet-mapping>
 </web-app>

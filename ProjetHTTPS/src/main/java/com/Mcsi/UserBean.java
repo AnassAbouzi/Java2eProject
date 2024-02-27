@@ -1,12 +1,10 @@
-package com.Mcsi;
+	package com.Mcsi;
 
 public class UserBean {
 	private int id;
 	private String username;
 	private String password;
 	private String role;
-	private UnitBean unit;
-	private int points;
 	
 	public UserBean(String username, String password) {
 		this.username = username;
@@ -52,22 +50,6 @@ public class UserBean {
 
 	public void setRole(String role) {
 		this.role = role;
-	}
-
-	public int getPoints() {
-		return points;
-	}
-
-	public void setPoints(int points) {
-		this.points = points;
-	}
-	
-	public UnitBean getUnit() {
-		return unit;
-	}
-
-	public void setUnit(UnitBean unit) {
-		this.unit = unit;
 	}
 
 }

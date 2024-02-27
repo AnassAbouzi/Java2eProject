@@ -27,10 +27,10 @@
 	    <button class="logout" onclick="location.href='Logout'">Logout</button>
 		</div> 
 
-		<h1>Add New Student</h1>
+		<h1>Add New Teacher</h1>
 		
-		<form action="AddStudentServlet" method="POST">
-		    <label for="studentName">Student User Name:</label>
+		<form action="AddTeacherServlet" method="POST">
+		    <label for="userName">Teacher User Name:</label>
 		    <input type="text" id="userName" name="userName" required>
 		    <br>
 		    
@@ -38,8 +38,8 @@
 		    <input type="text" id="password" name="password" required>
 		    <br>
 		    
-		    <label for="points">Points:</label>
-		    <input type="number" id="points" name="points" required>
+		    <label for="unit_name">Unit name:</label>
+		    <input type="text" id="unit_name" name="unit_name" required>
 		    <br>
 		    
 		    <button type="reset" class="reset">Reset</button>

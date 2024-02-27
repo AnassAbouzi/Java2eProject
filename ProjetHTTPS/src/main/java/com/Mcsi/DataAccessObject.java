@@ -41,9 +41,16 @@ public class DataAccessObject {
 			if (rs.next()) {
 				//si l'utilisateur existe on doit lui affecter tout ses proprietes
 				status = 0;
-				l.setRole(rs.getString(4));
-				l.setPoints(rs.getInt(6));
+				String role = rs.getString(4);
 				l.setId(rs.getInt(1));
+				l.setRole(role);
+				if (role.equals("student")) {
+					((Student)l).setPoints(rs.getInt(6));
+				} else if (role.equals("teacher")) {
+					((Teacher)l).setUnit_name(rs.getString(5));
+				}
+				
+				
 			}
 			//fermeture de la connection pour eviter les fuites de memoire 
 			rs.close();
@@ -55,23 +62,51 @@ public class DataAccessObject {
 		return status;
 	}
 	
-	public static List<UserBean> getUsers(String role) {
-		//methode static pour la recuperation des utilisateurs d'un role preci
+	public static List<Student> getStudents() {
+		//methode static pour la recuperation des etudiants
 		//initialisation de la liste des utilisateurs
-		List<UserBean> users = new ArrayList<UserBean>();
+		List<Student> users = new ArrayList<Student>();
+			try {
+				//creation de la connection avec la base de donnees
+				Connection con = DataAccessObject.getConnection();
+				//creation et initialisation de la requete sql
+				Statement st = con.createStatement();
+				String sql = "SELECT * FROM users WHERE role = 'student'";
+				//execution de la requete
+				ResultSet rs = st.executeQuery(sql);
+				while (rs.next()) {
+					//pour chaque resulta on va definir un nouveau utilisateur a qui on va affecter les proprietes recuperees
+					Student user = new Student(rs.getString(2), rs.getString(3), rs.getInt(6));
+					user.setId(rs.getInt(1));
+					//ajout de l'utilisateur au liste des utilisateur qu'on va retourner
+					users.add(user);
+				}
+				//fermeture de la connection
+				rs.close();
+				st.close();
+				con.close();
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+			return users;
+	}
+	
+	public static List<Teacher> getTeachers() {
+		//methode static pour la recuperation des professeurs
+		//initialisation de la liste des utilisateurs
+		List<Teacher> users = new ArrayList<Teacher>();
 		try {
 			//creation de la connection avec la base de donnees
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
 			Statement st = con.createStatement();
-			String sql = "SELECT * FROM users WHERE role = '" + role + "'";
+			String sql = "SELECT * FROM users WHERE role = 'teacher'";
 			//execution de la requete
 			ResultSet rs = st.executeQuery(sql);
 			while (rs.next()) {
 				//pour chaque resulta on va definir un nouveau utilisateur a qui on va affecter les proprietes recuperees
-				UserBean user = new UserBean(rs.getString(2), rs.getString(3));
+				Teacher user = new Teacher(rs.getString(2), rs.getString(3), rs.getString(5));
 				user.setId(rs.getInt(1));
-				user.setPoints(rs.getInt(6));
 				//ajout de l'utilisateur au liste des utilisateur qu'on va retourner
 				users.add(user);
 			}
@@ -83,16 +118,17 @@ public class DataAccessObject {
 			System.out.println(e);
 		}
 		return users;
+			
 	}
 	
-	public static void addUser(String username, String password, String role, int points) {
+	public static void addUser(String username, String password, String role, String unit_name, int points) {
 		//methode pour l'ajout d'un utilisateur
 		try {
 			//creation de la connection avec la base de donnees
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
 			Statement st = con.createStatement();
-			String sql = "INSERT INTO users (username, password, role, points) VALUES ('" + username + "', '" + password + "', '" + role + "', " + points + ")";
+			String sql = "INSERT INTO users (username, password, role, unit_name, points) VALUES ('" + username + "', '" + password + "', '" + role + "', '" + unit_name + "', " + points + ")";
 			//execution de la requete
 			st.executeUpdate(sql);
 			st.close();
