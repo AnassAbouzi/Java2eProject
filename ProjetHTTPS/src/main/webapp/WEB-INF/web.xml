@@ -69,4 +69,34 @@
     <servlet-name>AddTeacherServlet</servlet-name>
     <url-pattern>/AddTeacherServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ModifyStudentServlet</display-name>
+    <servlet-name>ModifyStudentServlet</servlet-name>
+    <servlet-class>com.Mcsi.ModifyStudentServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ModifyStudentServlet</servlet-name>
+    <url-pattern>/ModifyStudentServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ModifyTeacherServlet</display-name>
+    <servlet-name>ModifyTeacherServlet</servlet-name>
+    <servlet-class>com.Mcsi.ModifyTeacherServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ModifyTeacherServlet</servlet-name>
+    <url-pattern>/ModifyTeacherServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ModifyUserServlet</display-name>
+    <servlet-name>ModifyUserServlet</servlet-name>
+    <servlet-class>com.Mcsi.ModifyUserServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ModifyUserServlet</servlet-name>
+    <url-pattern>/ModifyUserServlet</url-pattern>
+  </servlet-mapping>
 </web-app>

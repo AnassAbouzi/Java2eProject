@@ -35,7 +35,7 @@ public class DataAccessObject {
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
 			Statement st = con.createStatement();
-			String sqlAuth = "SELECT * FROM users WHERE username = '" + l.getUsername() + "' AND password = '" + l.getPassword() + "'";
+			String sqlAuth = "SELECT * FROM users WHERE username = '" + l.getUsername() + "' AND password = '" + l.getPassword() + "';";
 			//execution de la requete
 			ResultSet rs = st.executeQuery(sqlAuth);
 			if (rs.next()) {
@@ -71,7 +71,7 @@ public class DataAccessObject {
 				Connection con = DataAccessObject.getConnection();
 				//creation et initialisation de la requete sql
 				Statement st = con.createStatement();
-				String sql = "SELECT * FROM users WHERE role = 'student'";
+				String sql = "SELECT * FROM users WHERE role = 'student';";
 				//execution de la requete
 				ResultSet rs = st.executeQuery(sql);
 				while (rs.next()) {
@@ -100,7 +100,7 @@ public class DataAccessObject {
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
 			Statement st = con.createStatement();
-			String sql = "SELECT * FROM users WHERE role = 'teacher'";
+			String sql = "SELECT * FROM users WHERE role = 'teacher';";
 			//execution de la requete
 			ResultSet rs = st.executeQuery(sql);
 			while (rs.next()) {
@@ -128,7 +128,24 @@ public class DataAccessObject {
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
 			Statement st = con.createStatement();
-			String sql = "INSERT INTO users (username, password, role, unit_name, points) VALUES ('" + username + "', '" + password + "', '" + role + "', '" + unit_name + "', " + points + ")";
+			String sql = "INSERT INTO users (username, password, role, unit_name, points) VALUES ('" + username + "', '" + password + "', '" + role + "', '" + unit_name + "', " + points + ");";
+			//execution de la requete
+			st.executeUpdate(sql);
+			st.close();
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void modifyUser(int id, String username, String password, String unit_name, int points) {
+		//methode pour la modification d'un utilisateur
+		try {
+			//creation de la connection avec la base de donnees
+			Connection con = DataAccessObject.getConnection();
+			//creation et initialisation de la requete sql
+			Statement st = con.createStatement();
+			String sql = "UPDATE users SET username = '" + username + "', password = '" + password + "', unit_name = '" + unit_name + "', points = '" + points +"' WHERE id = '" + id + "';";
 			//execution de la requete
 			st.executeUpdate(sql);
 			st.close();
@@ -145,7 +162,7 @@ public class DataAccessObject {
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
 			Statement st = con.createStatement();
-			String sql = "DELETE FROM users WHERE id='" + id + "'";
+			String sql = "DELETE FROM users WHERE id='" + id + "';";
 			//execution de la requete
 			st.executeUpdate(sql);
 			st.close();

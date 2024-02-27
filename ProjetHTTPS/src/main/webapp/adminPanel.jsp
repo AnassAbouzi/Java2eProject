@@ -58,7 +58,7 @@
 		        		<td><%= student.getPassword() %></td>
 		        		<td><%= student.getPoints() %></td>
 		        		<td>
-		        			<button class="modify" onclick="location.href='Delete?id=<%= student.getId() %>'">modifier</button>
+		        			<button class="modify" onclick="location.href='modifyStudent.jsp?id=<%= student.getId() %>'">modifier</button>
 		        			<button class="delete" onclick="location.href='Delete?id=<%= student.getId() %>'">Supprimer</button>
 		        		</td>
 		        	</tr>
@@ -90,7 +90,7 @@
 		        		<td><%= teacher.getPassword() %></td>
 		        		<td><%= teacher.getUnit_name() %></td>
 		        		<td>
-		        			<button class="modify" onclick="location.href='Delete?id=<%= teacher.getId() %>'">modifier</button>
+		        			<button class="modify" onclick="location.href='modifyTeacher.jsp?id=<%= teacher.getId() %>'">modifier</button>
 		        			<button class="delete" onclick="location.href='Delete?id=<%= teacher.getId() %>'">Supprimer</button>
 		        		</td>
 		        	</tr>
