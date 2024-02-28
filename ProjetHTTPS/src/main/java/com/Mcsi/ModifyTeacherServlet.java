@@ -18,7 +18,7 @@ public class ModifyTeacherServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
 		if (session != null) {
-			DataAccessObject.modifyUser(Integer.parseInt(request.getParameter("id")), request.getParameter("userName"), request.getParameter("password"), request.getParameter("unit_name"), 0);
+			DataAccessObject.modifyUser(Integer.parseInt(request.getParameter("id")), request.getParameter("userName"), request.getParameter("password"), "teacher", request.getParameter("unit_name"), 0);
 			response.sendRedirect("adminPanel.jsp");
 		} else {
 			response.sendRedirect("login.jsp");
