@@ -23,10 +23,10 @@
 	</head>
 	<body>
 		<div align="right">
-	    Welcome, <%= user.getUsername() %>
-	    <br>
-	    <br>
-	    <button class="logout" onclick="location.href='Logout'">Logout</button>
+		    Welcome, <%= user.getUsername() %>
+		    <br>
+		    <br>
+		    <button class="logout" onclick="location.href='Logout'">Logout</button>
 		</div> 
 		<h2>Admin Panel</h2>
 		<p>In this page you can manage all users</p>

@@ -237,4 +237,55 @@ public class DataAccessObject {
 			e.printStackTrace();
 		}
 	}
+	
+	public static List<String[]> getUnits(int id) {
+		//methode pour la recuperation des modules et professeurs
+		List<String[]> units_teachers = new ArrayList<>();
+		try {
+			//creation de la connection avec la base de donnees
+			Connection con = DataAccessObject.getConnection();
+			//creation et initialisation de la requete sql
+			Statement st = con.createStatement();
+			String sql = "SELECT users.username, teachers.unit_name FROM users JOIN teachers ON teachers.user_id = users.id WHERE teachers.unit_name in ( SELECT units.unit_name FROM units JOIN student_unit ON student_unit.unit_name = units.unit_name JOIN students ON students.id = student_unit.student_id JOIN users ON users.id = students.user_id WHERE users.id = " + id + " );";
+			ResultSet rs = st.executeQuery(sql);
+			while(rs.next()) {
+				units_teachers.add(new String[]{rs.getString(1), rs.getString(2)});
+			}
+			rs.close();
+			st.close();
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return units_teachers;
+	}
+	
+	public static int sendPoints(Student s, int id, int points) {
+		//methode pour effectuer un virement
+		int status = 0;
+		try {
+			//creation de la connection avec la base de donnees
+			Connection con = DataAccessObject.getConnection();
+			//creation et initialisation de la requete sql
+			Statement st = con.createStatement();
+			String sql = "Select points FROM students WHERE user_id = " + s.getId() +";";
+			ResultSet rs = st.executeQuery(sql);
+			if (rs.next()) {
+				if (rs.getInt(1) >= points) {
+					sql = "UPDATE students SET points = points + " + points + " WHERE user_id = " + id +";";
+					if (st.executeUpdate(sql) != 0) {
+						status = 1;
+					}
+				} else {
+					status = -2;
+				}
+			}
+			rs.close();
+			st.close();
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return status;
+	}
 }
