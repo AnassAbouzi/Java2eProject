@@ -273,7 +273,8 @@ public class DataAccessObject {
 			if (rs.next()) {
 				if (rs.getInt(1) >= points) {
 					sql = "UPDATE students SET points = points + " + points + " WHERE user_id = " + id +";";
-					if (st.executeUpdate(sql) != 0) {
+					String sql2 = "UPDATE students SET points = points - " + points + " WHERE user_id = " + s.getId() + ";";
+					if ((st.executeUpdate(sql) != 0) && (st.executeUpdate(sql2) != 0)) {
 						status = 1;
 					}
 				} else {

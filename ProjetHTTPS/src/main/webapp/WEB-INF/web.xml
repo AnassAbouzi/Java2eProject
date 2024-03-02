@@ -109,4 +109,24 @@
     <servlet-name>SignUpServlet</servlet-name>
     <url-pattern>/SignUpServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>PointTransfer</display-name>
+    <servlet-name>PointTransfer</servlet-name>
+    <servlet-class>com.Mcsi.PointTransfer</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>PointTransfer</servlet-name>
+    <url-pattern>/PointTransfer</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>PointsTransferServlet</display-name>
+    <servlet-name>PointsTransferServlet</servlet-name>
+    <servlet-class>com.Mcsi.PointsTransferServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>PointsTransferServlet</servlet-name>
+    <url-pattern>/PointsTransferServlet</url-pattern>
+  </servlet-mapping>
 </web-app>

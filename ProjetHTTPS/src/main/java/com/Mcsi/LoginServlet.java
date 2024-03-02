@@ -25,15 +25,20 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         UserBean userBean = new UserBean(username, password);
         if (userBean.validate()) {
-        	session.setAttribute("user", userBean);
         	int sessionTimeoutInSeconds = 60;
         	session.setMaxInactiveInterval(sessionTimeoutInSeconds);
         	String role = userBean.getRole();
         	if (role.equals("admin")) {
         		response.sendRedirect("adminPanel.jsp");
         	} else if (role.equals("teacher")) {
+        		Teacher teacher = new Teacher(username, password, null);
+        		teacher.validate();
+        		session.setAttribute("user", teacher);
         		response.sendRedirect("homeTeacher.jsp");
         	} else {
+        		Student student = new Student(username, password, 0);
+        		student.validate();
+        		session.setAttribute("user", student);
         		response.sendRedirect("homeStudent.jsp");
         	}
         } else {
