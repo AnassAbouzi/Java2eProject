@@ -129,4 +129,44 @@
     <servlet-name>PointsTransferServlet</servlet-name>
     <url-pattern>/PointsTransferServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AddPointsServlet</display-name>
+    <servlet-name>AddPointsServlet</servlet-name>
+    <servlet-class>com.Mcsi.AddPointsServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddPointsServlet</servlet-name>
+    <url-pattern>/AddPointsServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>addStudentToUnitServlet</display-name>
+    <servlet-name>addStudentToUnitServlet</servlet-name>
+    <servlet-class>com.Mcsi.addStudentToUnitServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>addStudentToUnitServlet</servlet-name>
+    <url-pattern>/addStudentToUnitServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AddStudentToUnitServlet</display-name>
+    <servlet-name>AddStudentToUnitServlet</servlet-name>
+    <servlet-class>com.Mcsi.AddStudentToUnitServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddStudentToUnitServlet</servlet-name>
+    <url-pattern>/AddStudentToUnitServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>DeleteStudent</display-name>
+    <servlet-name>DeleteStudent</servlet-name>
+    <servlet-class>com.Mcsi.DeleteStudent</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DeleteStudent</servlet-name>
+    <url-pattern>/DeleteStudent</url-pattern>
+  </servlet-mapping>
 </web-app>

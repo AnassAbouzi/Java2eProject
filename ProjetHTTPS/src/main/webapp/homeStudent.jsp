@@ -39,7 +39,7 @@
 		%> 
 			<script>alert("<%= notification %>")</script>
 		<%}%>
-		<div align="justify">
+		<div align="center">
 			<button onclick="location.href='unitList.jsp'">consulter toutes les modules</button>
 			<br>
 			<button onclick="location.href='virement.jsp'">Effectuer un virement de points</button>

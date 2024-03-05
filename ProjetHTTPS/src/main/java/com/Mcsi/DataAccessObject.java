@@ -141,6 +141,8 @@ public class DataAccessObject {
 			} else if (role.equals("teacher")) {
 				sql = "INSERT INTO teachers (user_id, unit_name) VALUES (" + id + ", '" + unit_name + "');";
 				st.executeUpdate(sql);
+				sql = "INSERT INTO units (unit_name, teacher_id) VALUES ('" + unit_name +"', (SELECT id FROM teachers WHERE teachers.unit_name = '" + unit_name + "'));";
+				st.executeUpdate(sql);
 			}
 			rs.close();
 			st.close();
@@ -288,5 +290,85 @@ public class DataAccessObject {
 			e.printStackTrace();
 		}
 		return status;
+	}
+	
+	public static List<Student> getStudentsInUnit(String unitName) {
+		//methode pour la recuperation des etudiants etudions le module specifie
+		List<Student> students = new ArrayList<Student>();
+		try {
+			//creation de la connection avec la base de donnees
+			Connection con = DataAccessObject.getConnection();
+			//creation et initialisation de la requete sql
+			Statement st = con.createStatement();
+			String sql = "SELECT users.id, users.username, students.points FROM users JOIN students ON students.user_id = users.id JOIN student_unit ON student_unit.student_id = students.id JOIN units ON units.unit_name = student_unit.unit_name WHERE units.unit_name = '" + unitName + "';";
+			ResultSet rs = st.executeQuery(sql);
+			while (rs.next()) {
+				Student student = new Student(rs.getString(2), "", rs.getInt(3));
+				student.setId(rs.getInt(1));
+				students.add(student);
+			}
+			rs.close();
+			st.close();
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return students;
+	}
+	
+	public static int addPoints(int id, int points) {
+		//methode pour l'ajout des points a un etudiant
+		int status = 0;
+		try {
+			//creation de la connection avec la base de donnees
+			Connection con = DataAccessObject.getConnection();
+			//creation et initialisation de la requete sql
+			Statement st = con.createStatement();
+			String sql = "Update students SET points = points + " + points + " WHERE user_id = " + id + ";";
+			if (st.executeUpdate(sql) != 0) {
+				status = 1;
+			}
+			st.close();
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return status;
+	}
+	
+	public static int addStudentToUnit(int id, String unit_name) {
+		//methode pour l'ajout d'un etudiant a un module
+		int status = 0;
+		try {
+			//creation de la connection avec la base de donnees
+			Connection con = DataAccessObject.getConnection();
+			//creation et initialisation de la requete sql
+			Statement st = con.createStatement();
+			String sql = "INSERT INTO student_unit (student_id, unit_name) VALUES ((SELECT students.id FROM students JOIN users ON users.id = students.user_id WHERE users.id = " + id + "), '" + unit_name + "');";
+			if (st.executeUpdate(sql) != 0) {
+				status = 1;
+			}
+			st.close();
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return status;
+	}
+	
+	public static void deleteStudentFromUnit(int teacherId, int studentId) {
+		//methode pour retirer un etudiant d'un module
+		try {
+			//creation de la connection avec la base de donnees
+			Connection con = DataAccessObject.getConnection();
+			//creation et initialisation de la requete sql
+			Statement st = con.createStatement();
+			String sql = "DELETE FROM student_unit WHERE student_id = (SELECT students.id FROM students JOIN users ON users.id = students.user_id WHERE users.id = " + studentId + " ) AND unit_name = (SELECT unit_name FROM teachers WHERE teachers.user_id = " + teacherId + ")";
+			st.executeUpdate(sql);
+			st.close();
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

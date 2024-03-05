@@ -29,6 +29,7 @@ public class LoginServlet extends HttpServlet {
         	session.setMaxInactiveInterval(sessionTimeoutInSeconds);
         	String role = userBean.getRole();
         	if (role.equals("admin")) {
+        		session.setAttribute("user", userBean);
         		response.sendRedirect("adminPanel.jsp");
         	} else if (role.equals("teacher")) {
         		Teacher teacher = new Teacher(username, password, null);

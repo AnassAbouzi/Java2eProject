@@ -8,21 +8,20 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-public class AddTeacherServlet extends HttpServlet {
+public class DeleteStudent extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     
-    public AddTeacherServlet() {
+    public DeleteStudent() {
         super();
     }
-
+    
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
 		if (session != null) {
-			String username = (String)request.getParameter("userName");
-			String password = (String)request.getParameter("password");
-			String unit_name = (String)request.getParameter("unit_name");
-			DataAccessObject.addUser(username, password, "teacher", unit_name, 0);
-			response.sendRedirect("adminPanel.jsp");
+			Teacher teacher = (Teacher)session.getAttribute("user");
+			int studentId = Integer.parseInt(request.getParameter("studentId"));
+			DataAccessObject.deleteStudentFromUnit(teacher.getId(), studentId);
+			response.sendRedirect("homeTeacher.jsp");
 		} else {
 			response.sendRedirect("login.jsp");
 		}
