@@ -2,6 +2,7 @@ package com.Mcsi;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -41,18 +42,22 @@ public class DataAccessObject {
 			//connection avec base de donne
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
-			Statement st = con.createStatement();
 			//recuperation des grain de sel
-			String sql = "SELECT salt FROM users WHERE username = '" + username + "';";
-			ResultSet rs = st.executeQuery(sql);
+			String sql = "SELECT salt FROM users WHERE username = ?";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, username);
+			ResultSet rs = ps.executeQuery();
 			rs.next();
 			String salt = rs.getString(1);
 			//hashage du mot de passe
 			String hashedPassword = BCrypt.hashpw(password, salt);
 			//dans la requete on groupe les trois tableaux users, students et teachers avec LEFT JOIN et on utilise la fonction COALESCE qui retourne la premiere valeur non null (dans ses arguments) pour eviter les champs null.
-			sql = "SELECT users.id, username, password, role, COALESCE(students.points, 0) AS points, COALESCE(teachers.unit_name, 'N/A') AS unit_name FROM users LEFT JOIN students ON users.id = students.user_id LEFT JOIN teachers ON users.id = teachers.user_id WHERE username = '" + username + "' AND password = '" + hashedPassword + "';";
+			sql = "SELECT users.id, username, password, role, COALESCE(students.points, 0) AS points, COALESCE(teachers.unit_name, 'N/A') AS unit_name FROM users LEFT JOIN students ON users.id = students.user_id LEFT JOIN teachers ON users.id = teachers.user_id WHERE username = ? AND password = ?";
+			ps = con.prepareStatement(sql);
+			ps.setString(1, username);
+			ps.setString(2, hashedPassword);
 			//execution de la requete
-			rs = st.executeQuery(sql);
+			rs = ps.executeQuery();
 			if (rs.next()) {
 				//si l'utilisateur existe on doit lui affecter tout ses proprietes
 				status = 0;
@@ -67,7 +72,7 @@ public class DataAccessObject {
 			}
 			//fermeture de la connection pour eviter les fuites de memoire 
 			rs.close();
-			st.close();
+			ps.close();
 			con.close();
 		} catch (Exception e) {
 			System.out.println(e);
@@ -144,25 +149,40 @@ public class DataAccessObject {
 			//creation de la connection avec la base de donnees
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
-			Statement st = con.createStatement();
-			String sql = "INSERT INTO users (username, password, role, salt) VALUES ('" + username + "', '" + hashedPassword + "', '" + role + "', '" + salt + "');";
+			String sql = "INSERT INTO users (username, password, role, salt) VALUES (?, ?, ?, ?);";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, username);
+			ps.setString(2, hashedPassword); 
+			ps.setString(3, role); 
+			ps.setString(4, salt); 
 			//execution de la requete
-			st.executeUpdate(sql);
-			sql = "Select id FROM users WHERE username = '" + username + "';";
-			ResultSet rs = st.executeQuery(sql);
+			ps.executeUpdate();
+			sql = "Select id FROM users WHERE username = ?;";
+			ps = con.prepareStatement(sql);
+			ps.setString(1, username);
+			ResultSet rs = ps.executeQuery();
 			rs.next();
 			int id = rs.getInt(1);
 			if (role.equals("student")) {
-				sql = "INSERT INTO students (user_id, points) VALUES (" + id + ", " + points + ");";
-				st.executeUpdate(sql);
+				sql = "INSERT INTO students (user_id, points) VALUES (?, ?);";
+				ps = con.prepareStatement(sql);
+				ps.setInt(1, id);
+				ps.setInt(2, points);
+				ps.executeUpdate();
 			} else if (role.equals("teacher")) {
-				sql = "INSERT INTO teachers (user_id, unit_name) VALUES (" + id + ", '" + unit_name + "');";
-				st.executeUpdate(sql);
-				sql = "INSERT INTO units (unit_name, teacher_id) VALUES ('" + unit_name +"', (SELECT id FROM teachers WHERE teachers.unit_name = '" + unit_name + "'));";
-				st.executeUpdate(sql);
+				sql = "INSERT INTO teachers (user_id, unit_name) VALUES (?, ?);";
+				ps = con.prepareStatement(sql);
+				ps.setInt(1, id);
+				ps.setString(2, unit_name);
+				ps.executeUpdate();
+				sql = "INSERT INTO units (unit_name, teacher_id) VALUES (?, (SELECT id FROM teachers WHERE teachers.unit_name = ?));";
+				ps = con.prepareStatement(sql);
+				ps.setString(1, unit_name);
+				ps.setString(2, unit_name);
+				ps.executeUpdate();
 			}
 			rs.close();
-			st.close();
+			ps.close();
 			con.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -179,18 +199,28 @@ public class DataAccessObject {
 			//creation de la connection avec la base de donnees
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
-			Statement st = con.createStatement();
-			String sql = "UPDATE users SET username = '" + username + "', password = '" + hashedPassword + "', salt = '" + salt + "' WHERE id = '" + id + "';";
+			String sql = "UPDATE users SET username = ?, password = ?, salt = ? WHERE id = ?;";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, username);
+			ps.setString(2, hashedPassword);
+			ps.setString(3, salt);
+			ps.setInt(4, id);
 			//execution de la requete
-			st.executeUpdate(sql);
+			ps.executeUpdate();
 			if (role.equals("student")) {
-				sql = "UPDATE students SET points = " + points + " WHERE user_id = " + id +";";
-				st.executeUpdate(sql);
+				sql = "UPDATE students SET points = ? WHERE user_id = ?;";
+				ps = con.prepareStatement(sql);
+				ps.setInt(1, points);
+				ps.setInt(2, id);
+				ps.executeUpdate();
 			} else if (role.equals("teacher")) {
-				sql = "UPDATE teachers SET unit_name = '" + unit_name + "' WHERE user_id = " + id + ";";
-				st.executeUpdate(sql);
+				sql = "UPDATE teachers SET unit_name = ? WHERE user_id = ?;";
+				ps = con.prepareStatement(sql);
+				ps.setString(1, unit_name);
+				ps.setInt(2, id);
+				ps.executeUpdate();
 			}
-			st.close();
+			ps.close();
 			con.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -203,11 +233,12 @@ public class DataAccessObject {
 			//creation de la connection avec la base de donnees
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
-			Statement st = con.createStatement();
-			String sql = "DELETE FROM users WHERE id='" + id + "';";
+			String sql = "DELETE FROM users WHERE id=?;";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, id);
 			//execution de la requete
-			st.executeUpdate(sql);
-			st.close();
+			ps.executeUpdate();
+			ps.close();
 			con.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -222,15 +253,16 @@ public class DataAccessObject {
 			//creation de la connection avec la base de donnees
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
-			Statement st = con.createStatement();
-			String sql = "SELECT * FROM users WHERE username = '" + username + "';";
-			ResultSet rs = st.executeQuery(sql);
+			String sql = "SELECT * FROM users WHERE username = ?;";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, username);
+			ResultSet rs = ps.executeQuery();
 			//s'il existe un utilisateur avec le meme nom d'utilisateur on retourne 1
 			if (rs.next()) {
 				status = 1;
 			}
 			rs.close();
-			st.close();
+			ps.close();
 			con.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -248,17 +280,24 @@ public class DataAccessObject {
 			//creation de la connection avec la base de donnees
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
-			Statement st = con.createStatement();
-			String sql = "INSERT INTO users (username, password, salt, role) VALUES ('" + username + "', '" + hashedPassword + "', '" + salt + "', 'student');";
-			st.executeUpdate(sql);
-			sql = "SELECT id FROM users WHERE username = '" + username + "';";
-			ResultSet rs = st.executeQuery(sql);
+			String sql = "INSERT INTO users (username, password, salt, role) VALUES (?, ?, ?, 'student');";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, username);
+			ps.setString(2, hashedPassword);
+			ps.setString(3, salt);
+			ps.executeUpdate();
+			sql = "SELECT id FROM users WHERE username = ?;";
+			ps = con.prepareStatement(sql);
+			ps.setString(1, username);
+			ResultSet rs = ps.executeQuery();
 			rs.next();
 			int id = rs.getInt(1);
-			sql = "INSERT INTO students (user_id, points) VALUES (" + id + ", 0);";
-			st.executeUpdate(sql);
+			sql = "INSERT INTO students (user_id, points) VALUES (?, 0);";
+			ps = con.prepareStatement(sql);
+			ps.setInt(1, id);
+			ps.executeUpdate();
 			rs.close();
-			st.close();
+			ps.close();
 			con.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -272,14 +311,15 @@ public class DataAccessObject {
 			//creation de la connection avec la base de donnees
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
-			Statement st = con.createStatement();
-			String sql = "SELECT users.username, teachers.unit_name FROM users JOIN teachers ON teachers.user_id = users.id WHERE teachers.unit_name in ( SELECT units.unit_name FROM units JOIN student_unit ON student_unit.unit_name = units.unit_name JOIN students ON students.id = student_unit.student_id JOIN users ON users.id = students.user_id WHERE users.id = " + id + " );";
-			ResultSet rs = st.executeQuery(sql);
+			String sql = "SELECT users.username, teachers.unit_name FROM users JOIN teachers ON teachers.user_id = users.id WHERE teachers.unit_name in ( SELECT units.unit_name FROM units JOIN student_unit ON student_unit.unit_name = units.unit_name JOIN students ON students.id = student_unit.student_id JOIN users ON users.id = students.user_id WHERE users.id = ? );";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
 				units_teachers.add(new String[]{rs.getString(1), rs.getString(2)});
 			}
 			rs.close();
-			st.close();
+			ps.close();
 			con.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -291,20 +331,28 @@ public class DataAccessObject {
 		//methode pour effectuer un virement
 		int status = 0;
 		Connection con = null;
+		int student_id = s.getId();
 		try {
 			//creation de la connection avec la base de donnees
 			con = DataAccessObject.getConnection();
 			//On commence la transaction en desactivant le mode auto-commit
 			con.setAutoCommit(false);
 			//creation et initialisation de la requete sql
-			Statement st = con.createStatement();
-			String sql = "Select points FROM students WHERE user_id = " + s.getId() +";";
-			ResultSet rs = st.executeQuery(sql);
+			String sql = "Select points FROM students WHERE user_id = ?;";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, student_id);
+			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 				if (rs.getInt(1) >= points) {
-					sql = "UPDATE students SET points = points + " + points + " WHERE user_id = " + id +";";
-					String sql2 = "UPDATE students SET points = points - " + points + " WHERE user_id = " + s.getId() + ";";
-					if ((st.executeUpdate(sql) != 0) && (st.executeUpdate(sql2) != 0)) {
+					sql = "UPDATE students SET points = points + ? WHERE user_id = ?;";
+					ps = con.prepareStatement(sql);
+					ps.setInt(1, points);
+					ps.setInt(2, id);
+					String sql2 = "UPDATE students SET points = points - ? WHERE user_id = ?;";
+					PreparedStatement ps2 = con.prepareStatement(sql2);
+					ps2.setInt(1, points);
+					ps2.setInt(2, student_id);
+					if ((ps.executeUpdate() != 0) && (ps.executeUpdate() != 0)) {
 						status = 1;
 						con.commit();
 					}
@@ -313,7 +361,7 @@ public class DataAccessObject {
 				}
 			}
 			rs.close();
-			st.close();
+			ps.close();
 		} catch (Exception e) {
 			try {
 	            if (con != null) {
@@ -343,16 +391,17 @@ public class DataAccessObject {
 			//creation de la connection avec la base de donnees
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
-			Statement st = con.createStatement();
-			String sql = "SELECT users.id, users.username, students.points FROM users JOIN students ON students.user_id = users.id JOIN student_unit ON student_unit.student_id = students.id JOIN units ON units.unit_name = student_unit.unit_name WHERE units.unit_name = '" + unitName + "';";
-			ResultSet rs = st.executeQuery(sql);
+			String sql = "SELECT users.id, users.username, students.points FROM users JOIN students ON students.user_id = users.id JOIN student_unit ON student_unit.student_id = students.id JOIN units ON units.unit_name = student_unit.unit_name WHERE units.unit_name = ?;";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, unitName);
+			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				Student student = new Student(rs.getString(2), "", rs.getInt(3));
 				student.setId(rs.getInt(1));
 				students.add(student);
 			}
 			rs.close();
-			st.close();
+			ps.close();
 			con.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -367,12 +416,14 @@ public class DataAccessObject {
 			//creation de la connection avec la base de donnees
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
-			Statement st = con.createStatement();
-			String sql = "Update students SET points = points + " + points + " WHERE user_id = " + id + ";";
-			if (st.executeUpdate(sql) != 0) {
+			String sql = "Update students SET points = points + ? WHERE user_id = ?;";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, points);
+			ps.setInt(2, id);
+			if (ps.executeUpdate() != 0) {
 				status = 1;
 			}
-			st.close();
+			ps.close();
 			con.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -387,12 +438,14 @@ public class DataAccessObject {
 			//creation de la connection avec la base de donnees
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
-			Statement st = con.createStatement();
-			String sql = "INSERT INTO student_unit (student_id, unit_name) VALUES ((SELECT students.id FROM students JOIN users ON users.id = students.user_id WHERE users.id = " + id + "), '" + unit_name + "');";
-			if (st.executeUpdate(sql) != 0) {
+			String sql = "INSERT INTO student_unit (student_id, unit_name) VALUES ((SELECT students.id FROM students JOIN users ON users.id = students.user_id WHERE users.id = ?), ?);";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, id);
+			ps.setString(2, unit_name);
+			if (ps.executeUpdate() != 0) {
 				status = 1;
 			}
-			st.close();
+			ps.close();
 			con.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -406,10 +459,12 @@ public class DataAccessObject {
 			//creation de la connection avec la base de donnees
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
-			Statement st = con.createStatement();
-			String sql = "DELETE FROM student_unit WHERE student_id = (SELECT students.id FROM students JOIN users ON users.id = students.user_id WHERE users.id = " + studentId + " ) AND unit_name = (SELECT unit_name FROM teachers WHERE teachers.user_id = " + teacherId + ")";
-			st.executeUpdate(sql);
-			st.close();
+			String sql = "DELETE FROM student_unit WHERE student_id = (SELECT students.id FROM students JOIN users ON users.id = students.user_id WHERE users.id = ? ) AND unit_name = (SELECT unit_name FROM teachers WHERE teachers.user_id = ?)";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, studentId);
+			ps.setInt(2, teacherId);
+			ps.executeUpdate();
+			ps.close();
 			con.close();
 		} catch (Exception e) {
 			e.printStackTrace();
