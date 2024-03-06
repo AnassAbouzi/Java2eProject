@@ -26,7 +26,6 @@
         </form>
 
         <p>Don't have an account? <a href="signup.jsp">Sign up</a></p>
-        <p>Forgot your password? <a href="resetPassword.jsp">Reset password</a></p>
     </div>
 	</body>
 </html>

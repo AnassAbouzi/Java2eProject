@@ -25,7 +25,7 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         UserBean userBean = new UserBean(username, password);
         if (userBean.validate()) {
-        	int sessionTimeoutInSeconds = 60;
+        	int sessionTimeoutInSeconds = 600;
         	session.setMaxInactiveInterval(sessionTimeoutInSeconds);
         	String role = userBean.getRole();
         	if (role.equals("admin")) {
