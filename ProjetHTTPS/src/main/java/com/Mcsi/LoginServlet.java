@@ -9,22 +9,23 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class LoginServlet extends HttpServlet {
+	//servlet qui gere les login
 	private static final long serialVersionUID = 1L;
        
     public LoginServlet() {
         super();
     }
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
-
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//creation d'une nouvelle session
 		HttpSession session = request.getSession(true);
+		//recuperation du nom de l'utilisateur et mot de passe
 		String username = request.getParameter("username");
         String password = request.getParameter("password");
         UserBean userBean = new UserBean(username, password);
+        //le mot de passe est hashe dans la methode validate avant qu'il soit comparer avec le hash dans la base de donnees
         if (userBean.validate()) {
+        	//invalidation de session apres "sessionTimeoutInSeconds" second
         	int sessionTimeoutInSeconds = 600;
         	session.setMaxInactiveInterval(sessionTimeoutInSeconds);
         	String role = userBean.getRole();

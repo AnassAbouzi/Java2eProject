@@ -18,7 +18,10 @@ public class AddStudentServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
 		if (session != null) {
-			DataAccessObject.addUser((String)request.getParameter("userName"), (String)request.getParameter("password"), "student", null, Integer.parseInt(request.getParameter("points")));
+			String username = (String)request.getParameter("userName");
+			String password = (String)request.getParameter("password");
+			int points = Integer.parseInt(request.getParameter("points"));
+			DataAccessObject.addUser(username, password, "student", null, points);
 			response.sendRedirect("adminPanel.jsp");
 		} else {
 			response.sendRedirect("login.jsp");

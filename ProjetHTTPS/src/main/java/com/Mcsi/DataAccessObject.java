@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 
 public class DataAccessObject {
 	//Cette class sert a gerer tout operation qui necessite la communication avec la base de donne
@@ -32,15 +34,25 @@ public class DataAccessObject {
 	public static int authenticate(UserBean l) {
 		//methode static pour l'authentification des utilisateurs
 		int status = 1;
+		//recuperation du nom d'utilisateur et mot de passe 
+		String username = l.getUsername();
+		String password = l.getPassword();
 		try {
 			//connection avec base de donne
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
 			Statement st = con.createStatement();
-			//dans la requete on groupe les trois tableaux users, students et teachers avec LEFT JOIN et on utilise la fonction COALESCE qui retourne la premiere valeur non null (dans ses arguments) pour eviter les champs null.
-			String sql = "SELECT users.id, username, password, role, COALESCE(students.points, 0) AS points, COALESCE(teachers.unit_name, 'N/A') AS unit_name FROM users LEFT JOIN students ON users.id = students.user_id LEFT JOIN teachers ON users.id = teachers.user_id WHERE username = '" + l.getUsername() + "' AND password = '" + l.getPassword() + "';";
-			//execution de la requete
+			//recuperation des grain de sel
+			String sql = "SELECT salt FROM users WHERE username = '" + username + "';";
 			ResultSet rs = st.executeQuery(sql);
+			rs.next();
+			String salt = rs.getString(1);
+			//hashage du mot de passe
+			String hashedPassword = BCrypt.hashpw(password, salt);
+			//dans la requete on groupe les trois tableaux users, students et teachers avec LEFT JOIN et on utilise la fonction COALESCE qui retourne la premiere valeur non null (dans ses arguments) pour eviter les champs null.
+			sql = "SELECT users.id, username, password, role, COALESCE(students.points, 0) AS points, COALESCE(teachers.unit_name, 'N/A') AS unit_name FROM users LEFT JOIN students ON users.id = students.user_id LEFT JOIN teachers ON users.id = teachers.user_id WHERE username = '" + username + "' AND password = '" + hashedPassword + "';";
+			//execution de la requete
+			rs = st.executeQuery(sql);
 			if (rs.next()) {
 				//si l'utilisateur existe on doit lui affecter tout ses proprietes
 				status = 0;
@@ -124,12 +136,16 @@ public class DataAccessObject {
 	
 	public static void addUser(String username, String password, String role, String unit_name, int points) {
 		//methode pour l'ajout d'un utilisateur
+		//generation des grain des sel
+		String salt = BCrypt.gensalt();
+		//hashage de mot de passe
+		String hashedPassword = BCrypt.hashpw(password, salt);
 		try {
 			//creation de la connection avec la base de donnees
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
 			Statement st = con.createStatement();
-			String sql = "INSERT INTO users (username, password, role) VALUES ('" + username + "', '" + password + "', '" + role + "');";
+			String sql = "INSERT INTO users (username, password, role, salt) VALUES ('" + username + "', '" + hashedPassword + "', '" + role + "', '" + salt + "');";
 			//execution de la requete
 			st.executeUpdate(sql);
 			sql = "Select id FROM users WHERE username = '" + username + "';";
@@ -155,12 +171,16 @@ public class DataAccessObject {
 	
 	public static void modifyUser(int id, String username, String password, String role, String unit_name, int points) {
 		//methode pour la modification d'un utilisateur
+		//generation des grain de sel 
+		String salt = BCrypt.gensalt();
+		//hashage du mot de passe
+		String hashedPassword = BCrypt.hashpw(password, salt);
 		try {
 			//creation de la connection avec la base de donnees
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
 			Statement st = con.createStatement();
-			String sql = "UPDATE users SET username = '" + username + "', password = '" + password + "' WHERE id = '" + id + "';";
+			String sql = "UPDATE users SET username = '" + username + "', password = '" + hashedPassword + "', salt = '" + salt + "' WHERE id = '" + id + "';";
 			//execution de la requete
 			st.executeUpdate(sql);
 			if (role.equals("student")) {
@@ -220,12 +240,16 @@ public class DataAccessObject {
 	
 	public static void createUser(String username, String password) {
 		//methode pour la creation d'un nouveau utilisateur
+		//generation des grain de sel
+		String salt = BCrypt.gensalt();
+		//hashage du mot de passe
+		String hashedPassword = BCrypt.hashpw(password, salt);
 		try {
 			//creation de la connection avec la base de donnees
 			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
 			Statement st = con.createStatement();
-			String sql = "INSERT INTO users (username, password, role) VALUES ('" + username + "', '" + password + "', 'student');";
+			String sql = "INSERT INTO users (username, password, salt, role) VALUES ('" + username + "', '" + hashedPassword + "', '" + salt + "', 'student');";
 			st.executeUpdate(sql);
 			sql = "SELECT id FROM users WHERE username = '" + username + "';";
 			ResultSet rs = st.executeQuery(sql);

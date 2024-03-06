@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Mar 01, 2024 at 03:23 PM
+-- Generation Time: Mar 06, 2024 at 10:13 PM
 -- Server version: 8.2.0
 -- PHP Version: 8.2.13
 
@@ -31,20 +31,20 @@ DROP TABLE IF EXISTS `students`;
 CREATE TABLE IF NOT EXISTS `students` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
-  `points` int DEFAULT NULL,
+  `points` int UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_student_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `students`
 --
 
 INSERT INTO `students` (`id`, `user_id`, `points`) VALUES
-(34, 11, 20),
-(35, 16, 22),
-(36, 12, 28),
-(37, 15, 11);
+(34, 11, 40),
+(35, 16, 21),
+(37, 15, 5),
+(42, 43, 27);
 
 -- --------------------------------------------------------
 
@@ -67,11 +67,7 @@ CREATE TABLE IF NOT EXISTS `student_unit` (
 INSERT INTO `student_unit` (`student_id`, `unit_name`) VALUES
 (34, 'cryptography'),
 (35, 'cryptography'),
-(36, 'cryptography'),
-(37, 'cryptography'),
-(34, 'reseaux'),
 (35, 'reseaux'),
-(36, 'reseaux'),
 (37, 'reseaux'),
 (34, 'theory des nombres');
 
@@ -88,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `teachers` (
   `unit_name` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_teacher_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `teachers`
@@ -97,7 +93,8 @@ CREATE TABLE IF NOT EXISTS `teachers` (
 INSERT INTO `teachers` (`id`, `user_id`, `unit_name`) VALUES
 (5, 18, 'reseaux'),
 (6, 19, 'cryptography'),
-(7, 20, 'theory des nombres');
+(7, 20, 'theory des nombres'),
+(13, 44, 'Java');
 
 -- --------------------------------------------------------
 
@@ -120,7 +117,8 @@ CREATE TABLE IF NOT EXISTS `units` (
 INSERT INTO `units` (`unit_name`, `teacher_id`) VALUES
 ('reseaux', 5),
 ('cryptography', 6),
-('theory des nombres', 7);
+('theory des nombres', 7),
+('Java', 13);
 
 -- --------------------------------------------------------
 
@@ -132,24 +130,26 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(191) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `password` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `role` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `salt` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `role`) VALUES
-(1, 'achraf', 'achraf', 'admin'),
-(11, 'anass', 'anass', 'student'),
-(12, 'imane', 'imane', 'student'),
-(15, 'youssef', 'youssef', 'student'),
-(16, 'chentoufi', 'chentoufi', 'student'),
-(18, 'bouchra', 'bouchra', 'teacher'),
-(19, 'souidi', 'souidi', 'teacher'),
-(20, 'cherabi', 'cherabi', 'teacher');
+INSERT INTO `users` (`id`, `username`, `password`, `role`, `salt`) VALUES
+(1, 'achraf', '$2a$10$secaW45MzQZ/w49yZOuec.zQLW0kHe9uU4VfBAum4u96FtJA5tMsC', 'admin', '$2a$10$secaW45MzQZ/w49yZOuec.'),
+(11, 'anass', '$2a$10$Pdjb46Wxnzq/OVvJAiLgp.wYss2t/Ya3LK0DylUzchBC1qnFFchpW', 'student', '$2a$10$Pdjb46Wxnzq/OVvJAiLgp.'),
+(15, 'youssef', '$2a$10$B8yWCENmxigN9BNq.JPire2HsQJX2vFfEdLe4/4QI4m.RaoaefdAu', 'student', '$2a$10$B8yWCENmxigN9BNq.JPire'),
+(16, 'chentoufi', '$2a$10$Y8uOf9q4b5ByWC7x9MRJqOdJW8lIRGuwncou2f3jEBd0glSuJDVi.', 'student', '$2a$10$Y8uOf9q4b5ByWC7x9MRJqO'),
+(18, 'bouchra', '$2a$10$03jU6aOYWljmVmyfIa4FHOpCmqta/.4rdsBsqK2sFf.t.6C8ki6/i', 'teacher', '$2a$10$03jU6aOYWljmVmyfIa4FHO'),
+(19, 'souidi', '$2a$10$DjO9a7TsIGb.hEYEgCpKjuXf3xa8yNPxjedQfbOZ7dpxcCuNpp7.6', 'teacher', '$2a$10$DjO9a7TsIGb.hEYEgCpKju'),
+(20, 'cherabi', '$2a$10$drOdSZ774eHOxCez5rHJOuJ7uduTY3BRaBgGADzSopj610NWRp1Oa', 'teacher', '$2a$10$drOdSZ774eHOxCez5rHJOu'),
+(43, 'imane', '$2a$10$Xqur7TzfNX9sr6xKWqOAKe9fbLr6puJolr07mH6MbAfrCcVuwRInO', 'student', '$2a$10$Xqur7TzfNX9sr6xKWqOAKe'),
+(44, 'bouhouch', '$2a$10$3eoPB5rUMvxt9n/IdMW8hOVo1n9iHpNTOoTU.MnN6Lgtk/vXMplSy', 'teacher', '$2a$10$3eoPB5rUMvxt9n/IdMW8hO');
 
 --
 -- Constraints for dumped tables

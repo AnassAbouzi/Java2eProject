@@ -4,6 +4,7 @@ public class UserBean {
 	private int id;
 	private String username;
 	private String password;
+	private String salt;
 	private String role;
 	
 	public UserBean(String username, String password) {
@@ -40,8 +41,16 @@ public class UserBean {
 		return password;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setPassword(String hashedPassword) {
+		this.password = hashedPassword;
+	}
+
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
 	}
 
 	public String getRole() {

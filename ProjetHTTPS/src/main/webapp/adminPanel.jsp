@@ -22,84 +22,80 @@
 		<link rel="stylesheet" href="css/adminPanel.css">
 	</head>
 	<body>
-		<div align="right">
-		    Welcome, <%= user.getUsername() %>
-		    <br>
-		    <br>
-		    <button class="logout" onclick="location.href='Logout'">Logout</button>
-		</div> 
-		<h2>Admin Panel</h2>
-		<p>In this page you can manage all users</p>
-		
-		<div class="tab">
-			<button class="tablinks" onclick="openCity(event, 'Students')">Students</button>
-			<button class="tablinks" onclick="openCity(event, 'Teachers')">Teachers</button>
-		</div>
-		
-		<div id="Students" class="tabcontent">
-			<table>
-	        	<thead>
-	            	<tr class="back">
-		                <th>ID</th>
-		                <th>USER NAME</th>
-		                <th>PASSWORD</th>
-		                <th>POINTS</th>
-		                <th>ACTION</th>
-		            </tr>
-		        </thead>
-	        	<tbody>
-		        <%
-		        	List<Student> students = DataAccessObject.getStudents();
-		        	for (Student student : students) {
-		        %>
-		        	<tr>
-		        		<td><%= student.getId() %></td>
-		        		<td><%= student.getUsername() %></td>
-		        		<td><%= student.getPassword() %></td>
-		        		<td><%= student.getPoints() %></td>
-		        		<td>
-		        			<button class="modify" onclick="location.href='modifyStudent.jsp?id=<%= student.getId() %>'">modifier</button>
-		        			<button class="delete" onclick="location.href='Delete?id=<%= student.getId() %>'">Supprimer</button>
-		        		</td>
-		        	</tr>
-	        	<%}%>
-	        	</tbody>
-	      	</table>
-	 		<button class="add-unit" onclick="location.href='addStudent.jsp'" type="button">Ajouter un etudiant</button>
-		</div>
-		
-		<div id="Teachers" class="tabcontent">
-		  <table>
-	        	<thead>
-	            	<tr class="back">
-		                <th>ID</th>
-		                <th>USER NAME</th>
-		                <th>PASSWORD</th>
-		                <th>UNIT NAME</th>
-		                <th>ACTION</th>
-		            </tr>
-		        </thead>
-	        	<tbody>
-		        <%
-		        	List<Teacher> teachers = DataAccessObject.getTeachers();
-		        	for (Teacher teacher : teachers) {
-		        %>
-		        	<tr>
-		        		<td><%= teacher.getId() %></td>
-		        		<td><%= teacher.getUsername() %></td>
-		        		<td><%= teacher.getPassword() %></td>
-		        		<td><%= teacher.getUnit_name() %></td>
-		        		<td>
-		        			<button class="modify" onclick="location.href='modifyTeacher.jsp?id=<%= teacher.getId() %>'">modifier</button>
-		        			<button class="delete" onclick="location.href='Delete?id=<%= teacher.getId() %>'">Supprimer</button>
-		        		</td>
-		        	</tr>
-	        	<%}%>
-	        	</tbody>
-	      	</table>
-	      	<button class="add-unit" onclick="location.href='addTeacher.jsp'" type="button">Ajouter un professeur</button>
-		</div>
-		
-		<script src="js/tabs.js"></script>
+	    <div align="right">
+	        Welcome, <%= user.getUsername() %>
+	        <br>
+	        <br>
+	        <button class="logout" onclick="location.href='Logout'">Logout</button>
+	    </div> 
+	    <h2>Admin Panel</h2>
+	    <p>Dans cette page tu peux manager tout les utilisateurs</p>
+	    
+	    <div class="tab">
+	        <button class="tablinks" onclick="openCity(event, 'Students')">Students</button>
+	        <button class="tablinks" onclick="openCity(event, 'Teachers')">Teachers</button>
+	    </div>
+	    
+	    <div id="Students" class="tabcontent">
+	        <table>
+	            <thead>
+	                <tr class="back">
+	                    <th>ID</th>
+	                    <th>USER NAME</th>
+	                    <th>PASSWORD</th>
+	                    <th>POINTS</th>
+	                    <th>ACTION</th>
+	                </tr>
+	            </thead>
+	            <tbody>
+	                <% List<Student> students = DataAccessObject.getStudents();
+	                   for (Student student : students) { %>
+	                    <tr>
+	                        <td><%= student.getId() %></td>
+	                        <td><%= student.getUsername() %></td>
+	                        <td><%= student.getPassword() %></td>
+	                        <td><%= student.getPoints() %></td>
+	                        <td>
+	                            <button class="modify" onclick="location.href='modifyStudent.jsp?id=<%= student.getId() %>'">modifier</button>
+	                            <button class="delete" onclick="location.href='Delete?id=<%= student.getId() %>'">Supprimer</button>
+	                        </td>
+	                    </tr>
+	                <% } %>
+	            </tbody>
+	        </table>
+	        <button class="add-unit" onclick="location.href='addStudent.jsp'" type="button">Ajouter un étudiant</button>
+	    </div>
+	    
+	    <div id="Teachers" class="tabcontent">
+	        <table>
+	            <thead>
+	                <tr class="back">
+	                    <th>ID</th>
+	                    <th>USER NAME</th>
+	                    <th>PASSWORD</th>
+	                    <th>UNIT NAME</th>
+	                    <th>ACTION</th>
+	                </tr>
+	            </thead>
+	            <tbody>
+	                <% List<Teacher> teachers = DataAccessObject.getTeachers();
+	                   for (Teacher teacher : teachers) { %>
+	                    <tr>
+	                        <td><%= teacher.getId() %></td>
+	                        <td><%= teacher.getUsername() %></td>
+	                        <td><%= teacher.getPassword() %></td>
+	                        <td><%= teacher.getUnit_name() %></td>
+	                        <td>
+	                            <button class="modify" onclick="location.href='modifyTeacher.jsp?id=<%= teacher.getId() %>'">modifier</button>
+	                            <button class="delete" onclick="location.href='Delete?id=<%= teacher.getId() %>'">Supprimer</button>
+	                        </td>
+	                    </tr>
+	                <% } %>
+	            </tbody>
+	        </table>
+	        <button class="add-unit" onclick="location.href='addTeacher.jsp'" type="button">Ajouter un professeur</button>
+	    </div>
+	    
+	    <script src="js/tabs.js"></script>
 	</body>
 </html>
