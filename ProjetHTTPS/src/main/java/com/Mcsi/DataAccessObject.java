@@ -330,57 +330,30 @@ public class DataAccessObject {
 	public static int sendPoints(Student s, int id, int points) {
 		//methode pour effectuer un virement
 		int status = 0;
-		Connection con = null;
-		int student_id = s.getId();
 		try {
 			//creation de la connection avec la base de donnees
-			con = DataAccessObject.getConnection();
-			//On commence la transaction en desactivant le mode auto-commit
-			con.setAutoCommit(false);
+			Connection con = DataAccessObject.getConnection();
 			//creation et initialisation de la requete sql
-			String sql = "Select points FROM students WHERE user_id = ?;";
-			PreparedStatement ps = con.prepareStatement(sql);
-			ps.setInt(1, student_id);
-			ResultSet rs = ps.executeQuery();
+			Statement st = con.createStatement();
+			String sql = "Select points FROM students WHERE user_id = " + s.getId() +";";
+			ResultSet rs = st.executeQuery(sql);
 			if (rs.next()) {
 				if (rs.getInt(1) >= points) {
-					sql = "UPDATE students SET points = points + ? WHERE user_id = ?;";
-					ps = con.prepareStatement(sql);
-					ps.setInt(1, points);
-					ps.setInt(2, id);
-					String sql2 = "UPDATE students SET points = points - ? WHERE user_id = ?;";
-					PreparedStatement ps2 = con.prepareStatement(sql2);
-					ps2.setInt(1, points);
-					ps2.setInt(2, student_id);
-					if ((ps.executeUpdate() != 0) && (ps.executeUpdate() != 0)) {
+					sql = "UPDATE students SET points = points + " + points + " WHERE user_id = " + id +";";
+					String sql2 = "UPDATE students SET points = points - " + points + " WHERE user_id = " + s.getId() + ";";
+					if ((st.executeUpdate(sql) != 0) && (st.executeUpdate(sql2) != 0)) {
 						status = 1;
-						con.commit(); //si tout se passe bien on commit
 					}
 				} else {
 					status = -2;
 				}
 			}
 			rs.close();
-			ps.close();
+			st.close();
+			con.close();
 		} catch (Exception e) {
-			try {
-	            if (con != null) {
-	                con.rollback(); // on Rollback la transaction en cas d'erreur
-	            }
-	        } catch (SQLException rollbackException) {
-	            rollbackException.printStackTrace();
-	        }
-	        e.printStackTrace();
-		} finally {
-	        try {
-	            if (con != null) {
-	                con.setAutoCommit(true); // on reactive le mode auto-commit 
-	                con.close();
-	            }
-	        } catch (SQLException closeException) {
-	            closeException.printStackTrace();
-	        }
-	    }
+			e.printStackTrace();
+		}
 		return status;
 	}
 	
