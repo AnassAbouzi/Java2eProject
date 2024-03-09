@@ -330,9 +330,12 @@ public class DataAccessObject {
 	public static int sendPoints(Student s, int id, int points) {
 		//methode pour effectuer un virement
 		int status = 0;
+		Connection con = null;
 		try {
 			//creation de la connection avec la base de donnees
-			Connection con = DataAccessObject.getConnection();
+			con = DataAccessObject.getConnection();
+			//On commence la transaction en desactivant le mode auto-commit
+			con.setAutoCommit(false);
 			//creation et initialisation de la requete sql
 			Statement st = con.createStatement();
 			String sql = "Select points FROM students WHERE user_id = " + s.getId() +";";
@@ -343,6 +346,7 @@ public class DataAccessObject {
 					String sql2 = "UPDATE students SET points = points - " + points + " WHERE user_id = " + s.getId() + ";";
 					if ((st.executeUpdate(sql) != 0) && (st.executeUpdate(sql2) != 0)) {
 						status = 1;
+						con.commit();
 					}
 				} else {
 					status = -2;
@@ -350,10 +354,25 @@ public class DataAccessObject {
 			}
 			rs.close();
 			st.close();
-			con.close();
 		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			try {
+	            if (con != null) {
+	                con.rollback(); // Rollback transaction on error
+	            }
+	        } catch (SQLException rollbackException) {
+	            rollbackException.printStackTrace();
+	        }
+	        e.printStackTrace();
+		} finally {
+	        try {
+	            if (con != null) {
+	                con.setAutoCommit(true); // Restore auto-commit mode
+	                con.close();
+	            }
+	        } catch (SQLException closeException) {
+	            closeException.printStackTrace();
+	        }
+	    }
 		return status;
 	}
 	
