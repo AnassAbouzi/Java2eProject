@@ -32,8 +32,8 @@
 	    <p>Dans cette page tu peux manager tout les utilisateurs</p>
 	    
 	    <div class="tab">
-	        <button class="tablinks" onclick="openCity(event, 'Students')">Students</button>
-	        <button class="tablinks" onclick="openCity(event, 'Teachers')">Teachers</button>
+	        <button class="tablinks" onclick="selectTab(event, 'Students')">Students</button>
+	        <button class="tablinks" onclick="selectTab(event, 'Teachers')">Teachers</button>
 	    </div>
 	    
 	    <div id="Students" class="tabcontent">
@@ -96,6 +96,6 @@
 	        <button class="add-unit" onclick="location.href='addTeacher.jsp'" type="button">Ajouter un professeur</button>
 	    </div>
 	    
-	    <script src="js/tabs.js"></script>
+	    <script src="js/adminTabs.js"></script>
 	</body>
 </html>
