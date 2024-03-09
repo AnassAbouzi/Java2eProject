@@ -354,7 +354,7 @@ public class DataAccessObject {
 					ps2.setInt(2, student_id);
 					if ((ps.executeUpdate() != 0) && (ps.executeUpdate() != 0)) {
 						status = 1;
-						con.commit();
+						con.commit(); //si tout se passe bien on commit
 					}
 				} else {
 					status = -2;
@@ -365,7 +365,7 @@ public class DataAccessObject {
 		} catch (Exception e) {
 			try {
 	            if (con != null) {
-	                con.rollback(); // Rollback transaction on error
+	                con.rollback(); // on Rollback la transaction en cas d'erreur
 	            }
 	        } catch (SQLException rollbackException) {
 	            rollbackException.printStackTrace();
@@ -374,7 +374,7 @@ public class DataAccessObject {
 		} finally {
 	        try {
 	            if (con != null) {
-	                con.setAutoCommit(true); // Restore auto-commit mode
+	                con.setAutoCommit(true); // on reactive le mode auto-commit 
 	                con.close();
 	            }
 	        } catch (SQLException closeException) {

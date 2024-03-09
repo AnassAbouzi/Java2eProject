@@ -23,10 +23,11 @@ public class LoginServlet extends HttpServlet {
 		String username = request.getParameter("username");
         String password = request.getParameter("password");
         UserBean userBean = new UserBean(username, password);
-        //le mot de passe est hashe dans la methode validate avant qu'il soit comparer avec le hash dans la base de donnees
+        //le mot de passe est hashe dans la methode validate 
+        //avant qu'il soit comparer avec le hash dans la base de donnees
         if (userBean.validate()) {
         	//invalidation de session apres "sessionTimeoutInSeconds" second
-        	int sessionTimeoutInSeconds = 600;
+        	int sessionTimeoutInSeconds = 1800;
         	session.setMaxInactiveInterval(sessionTimeoutInSeconds);
         	String role = userBean.getRole();
         	if (role.equals("admin")) {
